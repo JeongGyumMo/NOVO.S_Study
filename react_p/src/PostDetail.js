@@ -1,18 +1,48 @@
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import {useParams, Link, useNavigate} from 'react-router-dom';
 import './css/PostDetail.css';
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 function PostDetail() {
     const { id } = useParams();
+    let navigate = useNavigate();
 
-    const post = {
-        id,
-        title: `${id}번째 게시글`,
-        content: `${id}번째 게시글의 상세 내용입니다. 이곳에 게시글 내용이 들어갑니다.`,
+    let [post,setPost] = useState({
+        title:"",
+        content:""
+    });
+
+    const getPost= () => {
+        axios.get(`${process.env.REACT_APP_API_URL}/post/${id}`)
+            .then(response => {
+                console.log('게시글 가져오기 성공:', response.data);
+                setPost(response.data);
+            })
+            .catch(error => {
+                console.error('게시글 가져오기 실패:', error);
+            });
     };
 
+    useEffect(()=>{
+        getPost();
+    },[]);
+
     const handleDelete = () => {
-        alert('게시글이 삭제되었습니다.');
+        if (!window.confirm("정말 이 게시글을 삭제하시겠습니까?")) {
+            return;
+        }
+
+        axios.delete(`${process.env.REACT_APP_API_URL}/post/${id}`)
+            .then(response => {
+                console.log('게시글 삭제 성공:', response.data);
+                alert('게시글이 삭제되었습니다.');
+                navigate('/');
+            })
+            .catch(error => {
+                console.error('게시글 삭제 실패:', error);
+                alert('게시글 삭제에 실패했습니다.');
+            });
     };
 
     return (
@@ -31,5 +61,7 @@ function PostDetail() {
         </div>
     );
 }
+
+
 
 export default PostDetail;
