@@ -20,7 +20,7 @@ function PostEdit() {
                 setPost(response.data);
             })
             .catch(error => {
-                console.error('게시글 가져오기 실패:', error);
+                console.error('ㅞㅡ게시글 가져오기 실패:', error);
                 alert("게시글을 불러오는 데 실패했습니다.");
             });
     }, [id]);

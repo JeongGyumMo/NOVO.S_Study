@@ -1,6 +1,8 @@
 package restapi.prac.model;
-
 import jakarta.persistence.*;
+import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Post {
@@ -14,6 +16,9 @@ public class Post {
 
     @Column(nullable = false)
     private String content;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public Post(){}
 
