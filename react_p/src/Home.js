@@ -1,15 +1,15 @@
-import React, {useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './css/Home.css';
 import axios from "axios";
-
-// Home.js
 
 function Home() {
     const [posts, setPosts] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 10;
+
+    const navigate = useNavigate(); // 회원가입 이동용
 
     const getPostList = () => {
         axios.get(`${process.env.REACT_APP_API_URL}/post`, {
@@ -32,16 +32,17 @@ function Home() {
         getPostList();
     }, [currentPage]);
 
-    // 전체 페이지 번호 배열 생성
     const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
 
-    // 페이지 변경 핸들러
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
     return (
         <div className="home-container">
+            <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "10px" }}>
+                <button onClick={() => navigate("/signup")}>회원가입</button>
+            </div>
             <h1 className="home-title">게시글 목록</h1>
             <div className="posts-list">
                 {posts.map(post => (
@@ -54,7 +55,6 @@ function Home() {
                 ))}
             </div>
 
-            {/* 페이지 번호 네비게이션 */}
             <div className="pagination">
                 {pageNumbers.map((number) => (
                     <button
@@ -66,11 +66,9 @@ function Home() {
                     </button>
                 ))}
             </div>
-
             <Link to="/create" className="create-link">게시글 작성하기</Link>
         </div>
     );
 }
-
 
 export default Home;

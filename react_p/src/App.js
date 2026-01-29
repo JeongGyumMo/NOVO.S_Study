@@ -4,6 +4,7 @@ import Home from "./Home";
 import CreatePost from "./CreatePost";
 import PostDetail from "./PostDetail";
 import PostEdit from "./PostEdit";
+import Signup from "./Signup";
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
                 <Route path={"/create"} element={<CreatePost/>}/>
                 <Route path={"/post/:id"} element={<PostDetail/>}/>
                 <Route path={"/post/edit/:id"} element={<PostEdit/>}/>
+                <Route path="/signup" element={<Signup />} />
             </Routes>
         </div>
     </Router>
