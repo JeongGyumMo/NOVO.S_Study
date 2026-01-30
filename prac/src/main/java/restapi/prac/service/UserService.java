@@ -16,6 +16,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // 회원가입
     public void signup(String username, String password) {
 
         if (userRepository.existsByUsername(username)) {
@@ -27,5 +28,10 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(password)); // 암호화
 
         userRepository.save(user);
+    }
+
+    // 로그인 때 사용할 사용자 조회 메서드 추가
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
     }
 }
