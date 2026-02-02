@@ -12,37 +12,38 @@ function Home() {
 
     const navigate = useNavigate();
 
-    // 게시글 목록
-    const getPostList = () => {
-        api.get("/post", {
-            params: {
-                page: currentPage - 1,
-                size: postsPerPage
-            }
-        })
-        .then(response => {
-            setPosts(response.data.content);
-            setTotalPages(response.data.totalPages);
-        })
-        .catch(error => {
-            console.error('게시글 가져오기 실패:', error);
-        });
-    };
-
-    // 로그인 상태 확인
-    const checkLogin = () => {
-        api.get("/users/me")
-        .then(res => {
-            setLoginUser(res.data);
-        })
-        .catch(() => {
-            setLoginUser(null);
-        });
-    };
-
     useEffect(() => {
+        // 게시글 목록 불러오기
+        const getPostList = () => {
+            api.get("/post", {
+                params: {
+                    page: currentPage - 1,
+                    size: postsPerPage
+                }
+            })
+            .then(response => {
+                setPosts(response.data.content);
+                setTotalPages(response.data.totalPages);
+            })
+            .catch(error => {
+                console.error('게시글 가져오기 실패:', error);
+            });
+        };
+
+        // 로그인 상태 확인
+        const checkLogin = () => {
+            api.get("/users/me")
+            .then(res => {
+                setLoginUser(res.data);
+            })
+            .catch(() => {
+                setLoginUser(null);
+            });
+        };
+
         getPostList();
         checkLogin();
+
     }, [currentPage]);
 
     const handleLogout = async () => {
@@ -56,9 +57,19 @@ function Home() {
         }
     };
 
+    // 글쓰기 버튼 클릭 제어
+    const handleCreateClick = () => {
+        if (!loginUser) {
+            alert("로그인이 필요한 서비스입니다. 🔒");
+            navigate("/login");
+            return;
+        }
+        navigate("/create");
+    };
+
     return (
         <div className="home-container">
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px", marginBottom: "50px" }}>
+            <div className="top-bar">
                 {loginUser ? (
                     <>
                         <span>👋 {loginUser}님</span>
@@ -97,7 +108,13 @@ function Home() {
                 ))}
             </div>
 
-            <Link to="/create" className="create-link">게시글 작성하기</Link>
+            {/* 로그인 상태에 따라 글쓰기 버튼 색 변경 */}
+            <button
+                onClick={handleCreateClick}
+                className={loginUser ? "create-btn active" : "create-btn"}
+            >
+                게시글 작성하기
+            </button>
         </div>
     );
 }
