@@ -8,6 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import restapi.prac.model.Post;
 import restapi.prac.service.PostService;
+import jakarta.servlet.http.HttpSession;
+import restapi.prac.dto.PostResponseDto;
+import restapi.prac.model.User;
+
+
 
 import java.util.Optional;
 
@@ -19,26 +24,38 @@ public class PostController {
     private PostService postService;
 
     @GetMapping
-    public ResponseEntity<Page<Post>> listPost(@RequestParam(defaultValue = "0") int page,
-                                               @RequestParam(defaultValue = "10") int size){
-        System.out.println("getPost:method");
+    public ResponseEntity<Page<PostResponseDto>> listPost(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+
         Pageable pageable = PageRequest.of(page, size);
-        Page<Post> posts = postService.getPosts(pageable);
-        return ResponseEntity.ok().body(posts);
+        Page<PostResponseDto> posts = postService.getPosts(pageable)
+                .map(PostResponseDto::new);
+
+        return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPost(@PathVariable Long id){
-        System.out.println("getPost:method");
+    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long id){
         Optional<Post> postOpt = postService.getPost(id);
-        return postOpt.map(ResponseEntity::ok).orElseGet(()-> ResponseEntity.notFound().build());
+
+        return postOpt
+                .map(post -> ResponseEntity.ok(new PostResponseDto(post)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
     @PostMapping
-    public ResponseEntity<Post> createPost(@RequestBody Post post){
-        System.out.println("createPost:method");
-        Post createdPost = postService.createPost(post);
-        return ResponseEntity.ok(createdPost);
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody Post post, HttpSession session){
+
+        User loginUser = (User) session.getAttribute("loginUser");
+
+        if(loginUser == null){
+            return ResponseEntity.status(401).build();
+        }
+
+        Post createdPost = postService.createPost(post, loginUser);
+        return ResponseEntity.ok(new PostResponseDto(createdPost));
     }
 
     @PutMapping("/{id}")

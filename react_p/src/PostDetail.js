@@ -75,7 +75,7 @@ function PostDetail() {
 
             <Link to="/" className="back-link">목록으로 돌아가기</Link>
 
-            {/* 🔥 댓글 영역 */}
+            {/* 댓글 영역 */}
             <div className="comment-section">
                 <h2>댓글</h2>
 

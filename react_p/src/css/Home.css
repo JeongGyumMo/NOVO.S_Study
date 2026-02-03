@@ -31,7 +31,7 @@
 }
 
 .post-title {
-    margin: 0 0 10px;
+    margin: 10 0 10px;
     font-size: 1.8rem;
     color: #007BFF;
 }
@@ -130,4 +130,11 @@
 .create-btn.active:hover {
     opacity: 0.9;
 }
+
+.post-writer {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
 

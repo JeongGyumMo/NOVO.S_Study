@@ -88,9 +88,13 @@ function Home() {
             <div className="posts-list">
                 {posts.map(post => (
                     <div key={post.id} className="post-card">
+
+                        <p className="post-writer">작성자: {post.writer}</p>
+
                         <h2 className="post-title">
                             <Link to={`/post/${post.id}`}>{post.title}</Link>
                         </h2>
+
                         <p className="post-content">{post.content}</p>
                     </div>
                 ))}
