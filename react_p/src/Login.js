@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "./api/axios";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -7,20 +7,20 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://localhost:8080/api/users/login", {
+      await api.post("/users/login", {
         username: username.trim(),
         password: password.trim(),
-      },
-      {
+      }, {
         withCredentials: true
       });
 
       alert("로그인 성공!");
-      window.location.href = "/"; // 홈으로 이동
+      window.location.href = "/";
     } catch (err) {
       alert("아이디 또는 비밀번호가 틀렸습니다");
     }
   };
+
 
   return (
     <div>

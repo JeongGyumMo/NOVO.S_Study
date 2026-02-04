@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {useParams, Link, useNavigate} from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import './css/PostDetail.css';
 
@@ -14,23 +14,23 @@ function PostDetail() {
     const API = process.env.REACT_APP_API_URL;
 
     // 게시글 가져오기
-    const getPost = () => {
+    const getPost = useCallback(() => {
         axios.get(`${API}/post/${id}`)
             .then(res => setPost(res.data))
             .catch(err => console.error(err));
-    };
+    }, [API, id]);
 
     // 댓글 목록 가져오기
-    const getComments = () => {
+    const getComments = useCallback(() => {
         axios.get(`${API}/comments/${id}`)
             .then(res => setComments(res.data))
             .catch(err => console.error(err));
-    };
+    }, [API, id]);
 
     useEffect(() => {
         getPost();
         getComments();
-    }, [id]);
+    }, [getPost, getComments]);
 
     // 댓글 작성
     const handleCommentSubmit = () => {
@@ -75,7 +75,6 @@ function PostDetail() {
 
             <Link to="/" className="back-link">목록으로 돌아가기</Link>
 
-            {/* 댓글 영역 */}
             <div className="comment-section">
                 <h2>댓글</h2>
 

@@ -44,7 +44,6 @@ public class PostController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
     @PostMapping
     public ResponseEntity<PostResponseDto> createPost(@RequestBody Post post, HttpSession session){
 

@@ -30,7 +30,7 @@ function Home() {
             });
         };
 
-        // 로그인 상태 확인
+        // 로그인 상태 확인 (userId 받아옴)
         const checkLogin = () => {
             api.get("/users/me")
             .then(res => {
@@ -67,6 +67,19 @@ function Home() {
         navigate("/create");
     };
 
+    // 게시글 삭제
+    const handleDelete = async (postId) => {
+        if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
+        try {
+            await api.delete(`/post/${postId}`);
+            alert("삭제 완료");
+            window.location.reload();
+        } catch (err) {
+            alert("삭제 실패");
+        }
+    };
+
     return (
         <div className="home-container">
             <div className="top-bar">
@@ -89,13 +102,30 @@ function Home() {
                 {posts.map(post => (
                     <div key={post.id} className="post-card">
 
-                        <p className="post-writer">작성자: {post.writer}</p>
+                        <p className="post-writer">작성자 ID: {post.writer}</p>
 
                         <h2 className="post-title">
                             <Link to={`/post/${post.id}`}>{post.title}</Link>
                         </h2>
 
                         <p className="post-content">{post.content}</p>
+
+                        {loginUser && Number(loginUser) === Number(post.writer) && (
+                            <div className="post-actions">
+                                <button
+                                    className="edit-btn"
+                                    onClick={() => navigate(`/post/edit/${post.id}`)}
+                                >
+                                    수정
+                                </button>
+                                <button
+                                    className="delete-btn"
+                                    onClick={() => handleDelete(post.id)}
+                                >
+                                    삭제
+                                </button>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
@@ -112,7 +142,6 @@ function Home() {
                 ))}
             </div>
 
-            {/* 로그인 상태에 따라 글쓰기 버튼 색 변경 */}
             <button
                 onClick={handleCreateClick}
                 className={loginUser ? "create-btn active" : "create-btn"}

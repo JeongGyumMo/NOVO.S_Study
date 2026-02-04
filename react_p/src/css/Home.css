@@ -137,4 +137,34 @@
   margin-bottom: 4px;
 }
 
+.post-writer {
+    font-size: 12px;
+    color: gray;
+    margin-bottom: 5px;
+}
+
+.post-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.edit-btn, .delete-btn {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: white;
+}
+
+.edit-btn {
+    background-color: #4CAF50;
+}
+
+.delete-btn {
+    background-color: #f44336;
+}
+
 
