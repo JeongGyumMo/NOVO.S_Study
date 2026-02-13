@@ -1,7 +1,12 @@
 package restapi.prac.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import restapi.prac.model.Comment;
+import restapi.prac.model.User;
 import restapi.prac.service.CommentService;
 
 import java.util.List;
@@ -9,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/comments")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class CommentController {
 
     private final CommentService commentService;
@@ -18,22 +23,59 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-    // 댓글 작성
     @PostMapping
-    public Comment createComment(@RequestParam Long postId,
-                                 @RequestBody Map<String, String> body) {
-        return commentService.createComment(postId, body.get("content"));
+    public ResponseEntity<?> createComment(@RequestParam Long postId,
+                                           @RequestBody Map<String, String> body,
+                                           HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("loginUser") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 필요");
+        }
+
+        User loginUser = (User) session.getAttribute("loginUser");
+
+        Comment comment = commentService.createComment(
+                postId,
+                body.get("content"),
+                loginUser.getUsername()
+        );
+
+        return ResponseEntity.ok(comment);
     }
 
-    // 특정 게시글의 댓글 목록 조회
+    // ✅ 댓글 목록 조회
     @GetMapping("/{postId}")
     public List<Comment> getComments(@PathVariable Long postId) {
         return commentService.getComments(postId);
     }
 
-    // 댓글 삭제
+    // ✅ 댓글 삭제 (작성자만 가능)
     @DeleteMapping("/{commentId}")
-    public void deleteComment(@PathVariable Long commentId) {
+    public ResponseEntity<?> deleteComment(@PathVariable Long commentId,
+                                           HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("loginUser") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 필요");
+        }
+
+        User loginUser = (User) session.getAttribute("loginUser");
+
+        Comment comment = commentService.findById(commentId);
+
+        if (comment == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("댓글 없음");
+        }
+
+        if (!comment.getWriter().equals(loginUser.getUsername())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("삭제 권한 없음");
+        }
+
         commentService.deleteComment(commentId);
+
+        return ResponseEntity.ok("삭제 완료");
     }
 }

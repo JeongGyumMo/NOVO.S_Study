@@ -20,24 +20,27 @@ public class CommentService {
         this.postRepository = postRepository;
     }
 
-    // 댓글 작성
-    public Comment createComment(Long postId, String content) {
+    public Comment createComment(Long postId, String content, String writer) {
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("게시글 없음"));
 
         Comment comment = new Comment();
         comment.setContent(content);
+        comment.setWriter(writer);
         comment.setPost(post);
 
         return commentRepository.save(comment);
     }
 
-    // 댓글 목록 조회
     public List<Comment> getComments(Long postId) {
         return commentRepository.findByPostIdOrderByCreatedAtAsc(postId);
     }
 
-    // 댓글 삭제
+    public Comment findById(Long commentId) {
+        return commentRepository.findById(commentId).orElse(null);
+    }
+
     public void deleteComment(Long commentId) {
         commentRepository.deleteById(commentId);
     }

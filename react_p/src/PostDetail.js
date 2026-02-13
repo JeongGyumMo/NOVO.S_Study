@@ -1,17 +1,24 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from "axios";
 import './css/PostDetail.css';
 
 function PostDetail() {
     const { id } = useParams();
-    const navigate = useNavigate();
 
     const [post, setPost] = useState({ title: "", content: "" });
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
+    const [loginUser, setLoginUser] = useState(null);
 
     const API = process.env.REACT_APP_API_URL;
+
+    // 로그인 사용자 가져오기 (세션 기반)
+    const getLoginUser = useCallback(() => {
+        axios.get(`${API}/users/me`, { withCredentials: true })
+            .then(res => setLoginUser(res.data))
+            .catch(() => setLoginUser(null));
+    }, [API]);
 
     // 게시글 가져오기
     const getPost = useCallback(() => {
@@ -30,15 +37,19 @@ function PostDetail() {
     useEffect(() => {
         getPost();
         getComments();
-    }, [getPost, getComments]);
+        getLoginUser();
+    }, [getPost, getComments, getLoginUser]);
+
 
     // 댓글 작성
     const handleCommentSubmit = () => {
         if (!newComment.trim()) return;
 
-        axios.post(`${API}/comments?postId=${id}`, {
-            content: newComment
-        }).then(() => {
+        axios.post(
+            `${API}/comments?postId=${id}`,
+            { content: newComment },
+            { withCredentials: true }
+        ).then(() => {
             setNewComment("");
             getComments();
         }).catch(err => console.error(err));
@@ -46,32 +57,18 @@ function PostDetail() {
 
     // 댓글 삭제
     const handleCommentDelete = (commentId) => {
-        axios.delete(`${API}/comments/${commentId}`)
-            .then(() => getComments())
-            .catch(err => console.error(err));
-    };
-
-    // 게시글 삭제
-    const handleDelete = () => {
-        if (!window.confirm("정말 이 게시글을 삭제하시겠습니까?")) return;
-
-        axios.delete(`${API}/post/${id}`)
-            .then(() => {
-                alert('게시글이 삭제되었습니다.');
-                navigate('/');
-            })
-            .catch(() => alert('삭제 실패'));
+        axios.delete(
+            `${API}/comments/${commentId}`,
+            { withCredentials: true }
+        ).then(() => {
+            getComments();
+        }).catch(err => console.error(err));
     };
 
     return (
         <div className="post-detail-container">
             <h1 className="post-detail-title">{post.title}</h1>
             <p className="post-detail-content">{post.content}</p>
-
-            <div className="button-group">
-                <Link to={`/post/edit/${id}`} className="edit-button">수정하기</Link>
-                <button onClick={handleDelete} className="delete-button">삭제하기</button>
-            </div>
 
             <Link to="/" className="back-link">목록으로 돌아가기</Link>
 
@@ -94,7 +91,14 @@ function PostDetail() {
                                 <p>{comment.content}</p>
                                 <span>{comment.createdAt?.replace('T', ' ')}</span>
                             </div>
-                            <button onClick={() => handleCommentDelete(comment.id)}>삭제</button>
+
+                            {loginUser && comment.writer === String(loginUser) && (
+                                <button
+                                    onClick={() => handleCommentDelete(comment.id)}
+                                >
+                                    삭제
+                                </button>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -102,5 +106,6 @@ function PostDetail() {
         </div>
     );
 }
+
 
 export default PostDetail;

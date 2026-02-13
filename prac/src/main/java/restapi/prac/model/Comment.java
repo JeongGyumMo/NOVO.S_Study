@@ -15,6 +15,8 @@ public class Comment {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    private String writer;   // 🔥 작성자 추가
+
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -22,38 +24,21 @@ public class Comment {
     @JsonIgnore
     private Post post;
 
-    //댓글 저장되기 전에 시간 자동 입력
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
 
-    // ===== 기본 생성자 (JPA 필수) =====
     public Comment() {}
 
-    // ===== Getter =====
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public String getContent() { return content; }
+    public String getWriter() { return writer; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public Post getPost() { return post; }
 
-    public String getContent() {
-        return content;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    // ===== Setter =====
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
+    public void setContent(String content) { this.content = content; }
+    public void setWriter(String writer) { this.writer = writer; }
+    public void setPost(Post post) { this.post = post; }
 }
+
