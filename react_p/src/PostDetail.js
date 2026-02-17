@@ -13,21 +13,18 @@ function PostDetail() {
 
     const API = process.env.REACT_APP_API_URL;
 
-    // 로그인 사용자 가져오기 (세션 기반)
     const getLoginUser = useCallback(() => {
         axios.get(`${API}/users/me`, { withCredentials: true })
             .then(res => setLoginUser(res.data))
             .catch(() => setLoginUser(null));
     }, [API]);
 
-    // 게시글 가져오기
     const getPost = useCallback(() => {
         axios.get(`${API}/post/${id}`)
             .then(res => setPost(res.data))
             .catch(err => console.error(err));
     }, [API, id]);
 
-    // 댓글 목록 가져오기
     const getComments = useCallback(() => {
         axios.get(`${API}/comments/${id}`)
             .then(res => setComments(res.data))
@@ -40,8 +37,6 @@ function PostDetail() {
         getLoginUser();
     }, [getPost, getComments, getLoginUser]);
 
-
-    // 댓글 작성
     const handleCommentSubmit = () => {
         if (!newComment.trim()) return;
 
@@ -55,7 +50,6 @@ function PostDetail() {
         }).catch(err => console.error(err));
     };
 
-    // 댓글 삭제
     const handleCommentDelete = (commentId) => {
         axios.delete(
             `${API}/comments/${commentId}`,
@@ -92,10 +86,8 @@ function PostDetail() {
                                 <span>{comment.createdAt?.replace('T', ' ')}</span>
                             </div>
 
-                            {loginUser && comment.writer === String(loginUser) && (
-                                <button
-                                    onClick={() => handleCommentDelete(comment.id)}
-                                >
+                            {loginUser && comment.writerId === loginUser.id && (
+                                <button onClick={() => handleCommentDelete(comment.id)}>
                                     삭제
                                 </button>
                             )}
@@ -106,6 +98,5 @@ function PostDetail() {
         </div>
     );
 }
-
 
 export default PostDetail;

@@ -85,7 +85,7 @@ function Home() {
             <div className="top-bar">
                 {loginUser ? (
                     <>
-                        <span>👋 {loginUser}님</span>
+                        <span>👋 {loginUser.username}님</span>
                         <button onClick={handleLogout}>로그아웃</button>
                     </>
                 ) : (
@@ -110,7 +110,7 @@ function Home() {
 
                         <p className="post-content">{post.content}</p>
 
-                        {loginUser && Number(loginUser) === Number(post.writer) && (
+                        {loginUser && loginUser.username === post.writer && (
                             <div className="post-actions">
                                 <button
                                     className="edit-btn"

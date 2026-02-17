@@ -60,8 +60,20 @@ public class UserController {
         }
 
         User user = (User) session.getAttribute("loginUser");
-        return ResponseEntity.ok(user.getUsername());
+
+        return ResponseEntity.ok(new LoginUserResponse(user.getId(), user.getUsername()));
     }
+
+    static class LoginUserResponse {
+        public Long id;
+        public String username;
+
+        public LoginUserResponse(Long id, String username) {
+            this.id = id;
+            this.username = username;
+        }
+    }
+
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
