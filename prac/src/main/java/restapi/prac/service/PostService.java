@@ -30,11 +30,10 @@ public class PostService {
     }
 
     public Post createPost(Post post, User loginUser){
-
         User user = userRepository.findById(loginUser.getId())
                 .orElseThrow(() -> new RuntimeException("사용자 없음"));
 
-        post.setUser(user);   // 작성자 저장
+        post.setUser(user);
         return postRepository.save(post);
     }
 
@@ -46,10 +45,17 @@ public class PostService {
         });
     }
 
-    public boolean deletePost(Long id){
+
+    public boolean deletePost(Long id, User loginUser){
         return postRepository.findById(id).map(post -> {
+
+            if (!post.getUser().getId().equals(loginUser.getId())) {
+                throw new RuntimeException("삭제 권한 없음");
+            }
+
             postRepository.delete(post);
             return true;
+
         }).orElse(false);
     }
 }

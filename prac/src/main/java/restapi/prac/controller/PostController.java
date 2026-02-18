@@ -12,8 +12,6 @@ import jakarta.servlet.http.HttpSession;
 import restapi.prac.dto.PostResponseDto;
 import restapi.prac.model.User;
 
-
-
 import java.util.Optional;
 
 @RestController
@@ -23,6 +21,7 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    // 게시글 목록
     @GetMapping
     public ResponseEntity<Page<PostResponseDto>> listPost(
             @RequestParam(defaultValue = "0") int page,
@@ -35,6 +34,7 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
+    // 게시글 상세
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDto> getPost(@PathVariable Long id){
         Optional<Post> postOpt = postService.getPost(id);
@@ -44,6 +44,7 @@ public class PostController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // 게시글 작성
     @PostMapping
     public ResponseEntity<PostResponseDto> createPost(@RequestBody Post post, HttpSession session){
 
@@ -57,19 +58,37 @@ public class PostController {
         return ResponseEntity.ok(new PostResponseDto(createdPost));
     }
 
+    // 게시글 수정
     @PutMapping("/{id}")
-    public ResponseEntity<Post> updatePost(@PathVariable Long id, @RequestBody Post updatePost){
-        Optional<Post> updated = postService.updatePost(id, updatePost);
-        return updated.map(ResponseEntity::ok).orElseGet(()->ResponseEntity.notFound().build());
-    }
+    public ResponseEntity<?> updatePost(
+            @PathVariable Long id,
+            @RequestBody Post updatePost) {
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id){
-        boolean deleted = postService.deletePost(id);
-        if(deleted){
+        Optional<Post> updated = postService.updatePost(id, updatePost);
+
+        if (updated.isPresent()) {
             return ResponseEntity.ok().build();
-        }else {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // 게시글 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long id, HttpSession session){
+
+        User loginUser = (User) session.getAttribute("loginUser");
+        if(loginUser == null){
+            return ResponseEntity.status(401).build();
+        }
+
+        boolean deleted = postService.deletePost(id, loginUser);
+
+        if(deleted){
+            return ResponseEntity.ok().build();
+        }else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
