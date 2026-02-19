@@ -15,7 +15,7 @@ public class Comment {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    private String writer;   // 🔥 작성자 추가
+    private String writer;
 
     private LocalDateTime createdAt;
 

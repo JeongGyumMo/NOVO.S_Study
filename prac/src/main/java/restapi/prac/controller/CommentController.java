@@ -45,13 +45,11 @@ public class CommentController {
         return ResponseEntity.ok(comment);
     }
 
-    // ✅ 댓글 목록 조회
     @GetMapping("/{postId}")
     public List<Comment> getComments(@PathVariable Long postId) {
         return commentService.getComments(postId);
     }
 
-    // ✅ 댓글 삭제 (작성자만 가능)
     @DeleteMapping("/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable Long commentId,
                                            HttpServletRequest request) {

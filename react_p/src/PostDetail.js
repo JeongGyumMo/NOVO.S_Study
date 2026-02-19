@@ -86,7 +86,7 @@ function PostDetail() {
                                 <span>{comment.createdAt?.replace('T', ' ')}</span>
                             </div>
 
-                            {loginUser && comment.writerId === loginUser.id && (
+                            {loginUser && comment.writer === loginUser.username && (
                                 <button onClick={() => handleCommentDelete(comment.id)}>
                                     삭제
                                 </button>
