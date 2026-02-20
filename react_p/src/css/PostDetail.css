@@ -21,7 +21,6 @@
     margin-bottom: 30px;
 }
 
-/* 버튼 그룹 */
 .button-group {
     display: flex;
     justify-content: center;
@@ -36,12 +35,9 @@
     border-radius: 4px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background 0.3s ease, color 0.3s ease;
     text-decoration: none;
-    text-align: center;
 }
 
-/* 수정하기 버튼 스타일 */
 .edit-button {
     background: #007BFF;
     color: #fff;
@@ -51,7 +47,6 @@
     background: #0056b3;
 }
 
-/* 삭제하기 버튼 스타일 */
 .delete-button {
     background: #dc3545;
     color: #fff;
@@ -61,7 +56,6 @@
     background: #c82333;
 }
 
-/* 목록으로 돌아가기 버튼 */
 .back-link {
     display: block;
     width: fit-content;
@@ -71,24 +65,16 @@
     color: #fff;
     border-radius: 4px;
     text-decoration: none;
-    text-align: center;
-    transition: background 0.3s ease;
 }
 
 .back-link:hover {
     background: #5a6268;
 }
 
-/* 댓글 영역 */
 .comment-section {
     margin-top: 50px;
 }
 
-.comment-section h2 {
-    margin-bottom: 15px;
-}
-
-/* 댓글 입력창 */
 .comment-input-box {
     display: flex;
     flex-direction: column;
@@ -117,40 +103,64 @@
     background: #218838;
 }
 
-/* 댓글 목록 */
 .comment-list {
     list-style: none;
     padding: 0;
 }
 
 .comment-item {
+    text-align: left;
+    padding: 14px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.comment-header {
+    position: relative;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    background: #f8f9fa;
-    padding: 10px 15px;
-    border-radius: 5px;
-    margin-bottom: 10px;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 6px;
 }
 
-.comment-item p {
+.comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.comment-writer {
+    font-weight: 600;
+    color: #666;
+}
+
+.comment-dot {
+    color: #bbb;
+}
+
+.comment-date {
+    font-size: 13px;
+    color: #888;
+}
+
+.comment-text {
     margin: 0;
+    font-size: 15px;
+    color: #222;
 }
 
-.comment-item span {
-    font-size: 0.8rem;
-    color: gray;
-}
-
-.comment-item button {
-    background: #dc3545;
-    color: white;
+.comment-delete-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #999;
+    background: none;
     border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
     cursor: pointer;
 }
 
-.comment-item button:hover {
-    background: #c82333;
+.comment-delete-btn:hover {
+    color: #333;
 }

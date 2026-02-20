@@ -81,16 +81,26 @@ function PostDetail() {
                 <ul className="comment-list">
                     {comments.map(comment => (
                         <li key={comment.id} className="comment-item">
-                            <div>
-                                <p>{comment.content}</p>
-                                <span>{comment.createdAt?.replace('T', ' ')}</span>
+                            <div className="comment-header">
+                                <div className="comment-meta">
+                                    <span className="comment-writer">{comment.writer}</span>
+                                    <span className="comment-dot">•</span>
+                                    <span className="comment-date">
+                                        {comment.createdAt?.replace('T',' ').slice(0,16)}
+                                    </span>
+                                </div>
+
+                                {loginUser && comment.writer === loginUser.username && (
+                                    <button
+                                        className="comment-delete-btn"
+                                        onClick={() => handleCommentDelete(comment.id)}
+                                    >
+                                        삭제
+                                    </button>
+                                )}
                             </div>
 
-                            {loginUser && comment.writer === loginUser.username && (
-                                <button onClick={() => handleCommentDelete(comment.id)}>
-                                    삭제
-                                </button>
-                            )}
+                            <p className="comment-text">{comment.content}</p>
                         </li>
                     ))}
                 </ul>
