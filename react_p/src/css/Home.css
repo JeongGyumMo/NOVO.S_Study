@@ -167,4 +167,21 @@
     background-color: #f44336;
 }
 
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 8px;
+}
+
+.no-result {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+    font-size: 18px;
+}
 

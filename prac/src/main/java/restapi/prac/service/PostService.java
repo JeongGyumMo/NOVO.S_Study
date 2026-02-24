@@ -21,8 +21,17 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
+    // 전체 조회
     public Page<Post> getPosts(Pageable pageable){
         return postRepository.findAll(pageable);
+    }
+
+    public Page<Post> searchPosts(String keyword, Pageable pageable){
+        return postRepository.findByTitleContainingOrContentContaining(
+                keyword,
+                keyword,
+                pageable
+        );
     }
 
     public Optional<Post> getPost(Long id){
@@ -44,7 +53,6 @@ public class PostService {
             return postRepository.save(post);
         });
     }
-
 
     public boolean deletePost(Long id, User loginUser){
         return postRepository.findById(id).map(post -> {

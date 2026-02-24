@@ -21,17 +21,24 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-    // 게시글 목록
     @GetMapping
     public ResponseEntity<Page<PostResponseDto>> listPost(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size){
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword){
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<PostResponseDto> posts = postService.getPosts(pageable)
-                .map(PostResponseDto::new);
 
-        return ResponseEntity.ok(posts);
+        Page<Post> posts;
+
+        if(keyword == null || keyword.trim().isEmpty()){
+            posts = postService.getPosts(pageable);
+        } else {
+            posts = postService.searchPosts(keyword, pageable);
+        }
+
+        Page<PostResponseDto> response = posts.map(PostResponseDto::new);
+        return ResponseEntity.ok(response);
     }
 
     // 게시글 상세
@@ -90,5 +97,4 @@ public class PostController {
             return ResponseEntity.notFound().build();
         }
     }
-
 }
