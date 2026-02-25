@@ -6,10 +6,12 @@ import api from "./api/axios";
 function Home() {
     const [posts, setPosts] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [loginUser, setLoginUser] = useState(null);
-    const [keyword, setKeyword] = useState("");
+
     const [searchInput, setSearchInput] = useState("");
+    const [keyword, setKeyword] = useState("");
 
     const postsPerPage = 10;
     const navigate = useNavigate();
@@ -27,6 +29,7 @@ function Home() {
             .then(response => {
                 setPosts(response.data.content);
                 setTotalPages(response.data.totalPages);
+                setTotalCount(response.data.totalElements);
             })
             .catch(error => {
                 console.error('게시글 가져오기 실패:', error);
@@ -87,16 +90,6 @@ function Home() {
 
     return (
         <div className="home-container">
-            <div className="search-bar">
-                <input
-                    type="text"
-                    placeholder="제목 또는 내용 검색"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                />
-                <button onClick={handleSearch}>검색</button>
-            </div>
 
             <div className="top-bar">
                 {loginUser ? (
@@ -113,6 +106,23 @@ function Home() {
             </div>
 
             <h1 className="home-title">게시글 목록</h1>
+
+            <div className="search-bar">
+                <input
+                    type="text"
+                    placeholder="제목 또는 내용 검색"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                />
+                <button onClick={handleSearch}>검색</button>
+            </div>
+
+            {keyword && (
+                <div className="result-count">
+                    "{keyword}" 검색 결과 {totalCount}개
+                </div>
+            )}
 
             <div className="posts-list">
                 {posts.length === 0 ? (
